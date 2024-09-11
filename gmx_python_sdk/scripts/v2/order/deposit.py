@@ -282,12 +282,20 @@ class Deposit:
             )
 
     def _create_order(self, arguments):
-        """
-        Create Order
-        """
+ 
+        arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = arguments
+
+        if arg8 is None:
+            arg8 = 0
+
+        new_arguments = (arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11)
+
+        for i, arg in enumerate(new_arguments):
+            self.log.info(f"Argument {i}: {arg}, Type: {type(arg)}")
+
         return self._exchange_router_contract_obj.encodeABI(
             fn_name="createDeposit",
-            args=[arguments],
+            args=[new_arguments],
         )
 
     def _send_tokens(self, token_address, amount):
