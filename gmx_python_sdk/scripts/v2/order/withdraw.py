@@ -107,7 +107,7 @@ class Withdraw:
                 raw_txn, self.config.private_key
             )
             tx_hash = self._connection.eth.send_raw_transaction(
-                signed_txn.rawTransaction
+                signed_txn.raw_transaction
             )
             self.log.info("Txn submitted!")
             self.log.info(
@@ -206,30 +206,17 @@ class Withdraw:
     def _determine_swap_paths(self):
         """
         Calculate swap paths for long and short tokens
-
         """
 
         market = self.all_markets_info[self.market_key]
 
+        # Determine swap path for long token
         if market['long_token_address'] != self.out_token:
-            try:
-                self.long_token_swap_path, requires_multi_swap = determine_swap_route(
-                    self.all_markets_info,
-                    self.out_token,
-                    market['long_token_address']
-                )
-            except Exception:
-                pass
+            self.long_token_swap_path = []
 
+        # Determine swap path for short token
         if market['short_token_address'] != self.out_token:
-            try:
-                self.short_token_swap_path, requires_multi_swap = determine_swap_route(
-                    self.all_markets_info,
-                    self.out_token,
-                    market['short_token_address']
-                )
-            except Exception:
-                pass
+            self.long_token_swap_path = []
 
     def _create_order(self, arguments):
         """
@@ -310,7 +297,7 @@ class Withdraw:
             "market_addresses": market_addresses,
             "token_prices_tuple": prices,
             "gm_amount": self.gm_amount,
-            "ui_fee_receiver": "0x0000000000000000000000000000000000000000"
+            "ui_fee_receiver": "0xff00000000000000000000000000000000000001"
         }
-
+        print(parameters)
         return get_estimated_withdrawal_amount_out(self.config, parameters)
