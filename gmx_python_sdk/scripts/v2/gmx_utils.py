@@ -517,38 +517,76 @@ def get_estimated_deposit_amount_out(config, params: dict):
     reader_contract_obj = get_reader_contract(config)
 
     output = reader_contract_obj.functions.getDepositAmountOut(
-        params['data_store_address'],
-        params['market_addresses'],
-        params['token_prices_tuple'],
-        params['long_token_amount'],
-        params['short_token_amount'],
-        params['ui_fee_receiver'],
+        params['data_store_address'],  # string address
+        (
+            params['market_addresses'][0],
+            params['market_addresses'][1],
+            params['market_addresses'][2],
+            params['market_addresses'][3]
+        ),  # tuple of 4 addresses
+        (
+            (
+                params['token_prices_tuple'][0][0],
+                params['token_prices_tuple'][0][1]
+            ),
+            (
+                params['token_prices_tuple'][1][0],
+                params['token_prices_tuple'][1][1]
+            ),
+            (
+                params['token_prices_tuple'][2][0],
+                params['token_prices_tuple'][2][1]
+            )
+        ),  # tuple of tuples (int, int)
+        params['long_token_amount'],  # uint256
+        params['short_token_amount'],  # uint256
+        params['ui_fee_receiver'],  # string address
+        0,  # uint8 (example value, replace with actual value)
+        False  # bool (example value, replace with actual value)
     ).call()
-
-    return output
 
 
 def get_estimated_withdrawal_amount_out(config, params: dict):
     """
-    For a given chain and requested withdrawal amount get the amount of
-    long/shorts tokens expected to be output.
+    For a given chain and requested withdrawal amount, get the amount of
+    long/short tokens expected to be output.
 
     Parameters
     ----------
-    chain : str
-        arbitrum or avalanche.
+    config : ConfigManager
+        Configuration manager with chain and other details.
     params : dict
-        dictionary of the gm parameters.
-
+        Dictionary of the GM parameters including all required fields.
     """
+    # Retrieve the reader contract object
     reader_contract_obj = get_reader_contract(config)
 
+    # Prepare the arguments for the function call
+    data_store_address = params['data_store_address']
+    market_addresses = (
+        params['market_addresses'][0],
+        params['market_addresses'][1],
+        params['market_addresses'][2],
+        params['market_addresses'][3]
+    )
+    token_prices_tuple = (
+        (int(params['token_prices_tuple'][0][0]), int(params['token_prices_tuple'][0][1])),
+        (int(params['token_prices_tuple'][1][0]), int(params['token_prices_tuple'][1][1])),
+        (int(params['token_prices_tuple'][2][0]), int(params['token_prices_tuple'][2][1]))
+    )
+    gm_amount = int(params['gm_amount'])  # Ensure it's uint256
+    ui_fee_receiver = params['ui_fee_receiver']
+    print("адрес получателя комиссии:",ui_fee_receiver)
+    additional_uint8 = int(params.get('additional_uint8', 0))  # Ensure it's uint8
+
+    # Call the function with the correct number and types of arguments
     output = reader_contract_obj.functions.getWithdrawalAmountOut(
-        params['data_store_address'],
-        params['market_addresses'],
-        params['token_prices_tuple'],
-        params['gm_amount'],
-        params['ui_fee_receiver'],
+        data_store_address,  # address
+        market_addresses,  # (address, address, address, address)
+        token_prices_tuple,  # ((uint256, uint256), (uint256, uint256), (uint256, uint256))
+        gm_amount,  # uint256
+        ui_fee_receiver,  # address
+        additional_uint8  # uint8
     ).call()
 
     return output
