@@ -123,7 +123,7 @@ class Deposit:
             )
             self.log.info("Txn submitted!")
             self.log.info(
-                "Check status: https://arbiscan.io/tx/{}".format(tx_hash.hex())
+                "Check status: https://arbiscan.io/tx/0x{}".format(tx_hash.hex())
             )
 
             self.log.info("Transaction submitted!")
