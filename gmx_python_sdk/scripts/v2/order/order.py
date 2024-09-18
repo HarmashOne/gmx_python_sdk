@@ -109,7 +109,7 @@ class Order:
                 raw_txn, self.config.private_key
             )
             tx_hash = self._connection.eth.send_raw_transaction(
-                signed_txn.rawTransaction
+                signed_txn.raw_transaction
             )
             self.log.info("Txn submitted!")
             self.log.info(
