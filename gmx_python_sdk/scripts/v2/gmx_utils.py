@@ -140,27 +140,17 @@ class ConfigManager:
         self.private_key = None
         self.tg_bot_token = None
 
-    def set_config(self, filepath: str = os.path.join(base_dir, "config.yaml")):
-
-        with open(filepath, 'r') as file:
+    def set_config(self, filepath: str = None):
+        if filepath:
+            config_file_path = filepath
+        else:
+            config_file_path = os.path.join(base_dir, "config.yaml")
+        with open(config_file_path, 'r') as file:
             config_file = yaml.safe_load(file)
-
         self.set_rpc(config_file['rpcs'][self.chain])
         self.set_chain_id(config_file['chain_ids'][self.chain])
         self.set_wallet_address(config_file['user_wallet_address'])
         self.set_private_key(config_file['private_key'])
-
-    def set_rpc(self, value):
-        self.rpc = value
-
-    def set_chain_id(self, value):
-        self.chain_id = value
-
-    def set_wallet_address(self, value):
-        self.user_wallet_address = value
-
-    def set_private_key(self, value):
-        self.private_key = value
 
 
 def create_connection(config):
